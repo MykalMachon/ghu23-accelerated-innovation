@@ -1,0 +1,44 @@
+name: Package
+
+on: 
+  push: 
+    branches: 
+    - main
+
+# this is good to know; didn't realize you could specify perms
+permissions:
+  contents: read
+
+jobs: 
+  package:
+    name: Create package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with: 
+          node-version-file: src/.nvmrc
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+      - name: setup NPM
+        working-directory: ${{ github.workspace }}/src
+        run: npm install -g npm@latest
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        working-directory: ${{ github.workspace }}/src
+        run: | 
+          npm run test
+      - name: Package
+        working-directory: ${{ github.workspace }}/src
+        run: |
+          npm run package
+      - name: Store artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: package
+          path: ${{ github.workspace }}/src/publish/package.zip
+          
+        
