@@ -26,6 +26,7 @@ jobs:
         working-directory: ${{ github.workspace }}/src
         run: npm install -g npm@latest
       - name: Install dependencies
+        working-directory: ${{ github.workspace }}/src
         run: npm ci
       - name: Run tests
         working-directory: ${{ github.workspace }}/src
